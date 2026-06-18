@@ -1,0 +1,35 @@
+name: Test markdown link checking with custom fd command parameters
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Create test markdown files
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/test-docs"
+
+          cat > "$GITHUB_WORKSPACE/test-docs/main.md" << 'EOF'
+          # Main Document
+
+          [GitHub](https://github.com)
+          EOF
+
+          # Create a hidden markdown file that should be found with --hidden flag
+          cat > "$GITHUB_WORKSPACE/test-docs/.hidden.md" << 'EOF'
+          # Hidden Document
+
+          [GitHub](https://github.com)
+          EOF
+
+      - name: Run markdown link checker with custom fd params
+        id: action
+        uses: .
+        with:
+          fd_cmd_params: "test-docs -0 --extension md --type f --hidden"
+
+      - name: Assert action completed successfully with custom fd params
+        run: |
+          echo "PASS: action completed with custom fd command parameters without error"

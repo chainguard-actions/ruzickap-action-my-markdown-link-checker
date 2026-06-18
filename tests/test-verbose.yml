@@ -1,0 +1,30 @@
+name: Test verbose mode for markdown link checking
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Create test markdown file with valid links
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/test-docs"
+          cat > "$GITHUB_WORKSPACE/test-docs/verbose-test.md" << 'EOF'
+          # Verbose Mode Test
+
+          Testing verbose mode with a valid link.
+
+          [GitHub](https://github.com)
+          EOF
+
+      - name: Run markdown link checker in verbose mode
+        id: action
+        uses: .
+        with:
+          search_paths: test-docs
+          verbose: "true"
+
+      - name: Assert action completed successfully in verbose mode
+        run: |
+          echo "PASS: action completed in verbose mode without error"

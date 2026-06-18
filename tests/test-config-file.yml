@@ -1,0 +1,46 @@
+name: Test markdown link checking with config file
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Create test markdown file and config
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/test-docs"
+
+          # Create a markdown-link-check config that ignores certain patterns
+          cat > "$GITHUB_WORKSPACE/mlc-config.json" << 'EOF'
+          {
+            "ignorePatterns": [
+              {
+                "pattern": "^https://this-domain-does-not-exist"
+              }
+            ],
+            "timeout": "20s",
+            "retryOn429": true,
+            "retryCount": 2,
+            "aliveStatusCodes": [200, 206]
+          }
+          EOF
+
+          # Create a markdown file with a link that would normally fail but is ignored by config
+          cat > "$GITHUB_WORKSPACE/test-docs/config-test.md" << 'EOF'
+          # Config File Test
+
+          [GitHub](https://github.com)
+          [Ignored Link](https://this-domain-does-not-exist-xyz.invalid)
+          EOF
+
+      - name: Run markdown link checker with config file
+        id: action
+        uses: .
+        with:
+          search_paths: test-docs
+          config_file: mlc-config.json
+
+      - name: Assert action completed successfully with config file
+        run: |
+          echo "PASS: action completed with config file without error"

@@ -1,0 +1,29 @@
+name: Test basic markdown link checking
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Create test markdown file with valid links
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/test-docs"
+          cat > "$GITHUB_WORKSPACE/test-docs/valid.md" << 'EOF'
+          # Test Document
+
+          This is a test document with a valid link.
+
+          [GitHub](https://github.com)
+          EOF
+
+      - name: Run markdown link checker on test-docs
+        id: action
+        uses: .
+        with:
+          search_paths: test-docs
+
+      - name: Assert action completed successfully
+        run: |
+          echo "PASS: action completed without error"

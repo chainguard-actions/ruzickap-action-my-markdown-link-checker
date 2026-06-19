@@ -1,0 +1,18 @@
+name: Test quiet mode
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Run markdown link checker in quiet mode
+        id: action
+        uses: .
+        with:
+          search_paths: tests/fixtures
+          quiet: "true"
+      - name: Assert action succeeded in quiet mode
+        run: |
+          echo "Action completed successfully in quiet mode"
+          echo "PASS"

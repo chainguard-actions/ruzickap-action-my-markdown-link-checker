@@ -1,0 +1,17 @@
+name: Test fd_cmd_params usage
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Run markdown link checker with custom fd params targeting only valid.md
+        id: action
+        uses: .
+        with:
+          fd_cmd_params: tests/fixtures/valid.md -0 --extension md --type f
+      - name: Assert action succeeded with custom fd params
+        run: |
+          echo "Action completed successfully with custom fd_cmd_params"
+          echo "PASS"

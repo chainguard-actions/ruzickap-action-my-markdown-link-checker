@@ -9,6 +9,7 @@ Hardened by [Chainguard](https://www.chainguard.dev) from the upstream action at
 | Version | Tag | Upstream commit |
 |---------|-----|-----------------|
 | v1.1.2 | [`v1.1.2`](https://github.com/chainguard-actions/ruzickap-action-my-markdown-link-checker/tree/v1.1.2) | [`9ea0105`](https://github.com/ruzickap/action-my-markdown-link-checker/commit/9ea0105ea7b4512b557adc4341793fc958f1b673) |
+| v1.4.0 | [`v1.4.0`](https://github.com/chainguard-actions/ruzickap-action-my-markdown-link-checker/tree/v1.4.0) | [`51aa9a3`](https://github.com/ruzickap/action-my-markdown-link-checker/commit/51aa9a3a3c6781804a3660ff105f650ac44c56e4) |
 
 ## Privacy
 

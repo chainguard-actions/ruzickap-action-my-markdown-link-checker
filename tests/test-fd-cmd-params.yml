@@ -1,4 +1,4 @@
-name: Test fd_cmd_params parameter
+name: Test fd_cmd_params input - custom fd command parameters
 on:
   workflow_dispatch:
 jobs:
@@ -6,15 +6,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - name: Run markdown link checker with custom fd params
+
+      - name: Verify fixture file exists
+        run: |
+          ls -la "$GITHUB_WORKSPACE/tests/fixtures/fd-params/docs/"
+          cat "$GITHUB_WORKSPACE/tests/fixtures/fd-params/docs/readme.md"
+
+      - name: Run action with custom fd_cmd_params to only scan docs directory
         id: action
         uses: .
         with:
-          fd_cmd_params: >-
-            . -0 --extension md --type f --hidden --no-ignore
-            tests/fixtures/subdir
+          fd_cmd_params: . -0 --extension md --type f --hidden --no-ignore ${{ github.workspace }}/tests/fixtures/fd-params/docs
           verbose: "true"
-      - name: Assert action succeeded with custom fd params
+
+      - name: Assert action succeeded (only docs directory was scanned)
         run: |
-          echo "Action completed with custom fd params successfully"
-          echo "PASS"
+          echo "PASS: action completed successfully with custom fd_cmd_params"

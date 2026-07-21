@@ -1,0 +1,24 @@
+name: Test search_paths input - limit scanning to specific paths
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Verify fixture file exists
+        run: |
+          ls -la "$GITHUB_WORKSPACE/tests/fixtures/search-paths/included/"
+          cat "$GITHUB_WORKSPACE/tests/fixtures/search-paths/included/good.md"
+
+      - name: Run action only on the included search path
+        id: action
+        uses: .
+        with:
+          search_paths: ${{ github.workspace }}/tests/fixtures/search-paths/included
+          verbose: "true"
+
+      - name: Assert action succeeded (only checked included path)
+        run: |
+          echo "PASS: action completed successfully - only included path was checked"

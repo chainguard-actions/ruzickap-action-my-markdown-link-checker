@@ -1,4 +1,4 @@
-name: Test exclude parameter
+name: Test exclude input - skip certain files or directories
 on:
   workflow_dispatch:
 jobs:
@@ -6,16 +6,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - name: Run markdown link checker with exclusion
+
+      - name: Verify fixture files exist
+        run: |
+          ls -la "$GITHUB_WORKSPACE/tests/fixtures/exclude/"
+          ls -la "$GITHUB_WORKSPACE/tests/fixtures/exclude/bad/"
+          ls -la "$GITHUB_WORKSPACE/tests/fixtures/exclude/good/"
+
+      - name: Run action with exclude to skip the bad directory
         id: action
         uses: .
         with:
-          search_paths: |
-            tests/fixtures
-          exclude: |
-            excluded
+          search_paths: ${{ github.workspace }}/tests/fixtures/exclude
+          exclude: bad
           verbose: "true"
-      - name: Assert action succeeded with exclusion
+
+      - name: Assert action succeeded (bad file was excluded)
         run: |
-          echo "Action completed with exclusion successfully"
-          echo "PASS"
+          echo "PASS: action completed successfully - bad directory was excluded"

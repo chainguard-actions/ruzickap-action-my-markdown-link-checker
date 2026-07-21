@@ -1,4 +1,4 @@
-name: Test basic usage
+name: Test basic usage - check markdown files with valid links
 on:
   workflow_dispatch:
 jobs:
@@ -6,14 +6,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - name: Run markdown link checker on fixture docs
+
+      - name: Verify fixture file exists
+        run: |
+          ls -la "$GITHUB_WORKSPACE/tests/fixtures/basic/"
+          cat "$GITHUB_WORKSPACE/tests/fixtures/basic/valid.md"
+
+      - name: Run action on specific search path with valid markdown
         id: action
         uses: .
         with:
-          search_paths: |
-            tests/fixtures/docs
+          search_paths: ${{ github.workspace }}/tests/fixtures/basic
           verbose: "true"
+
       - name: Assert action succeeded
         run: |
-          echo "Action completed successfully"
-          echo "PASS"
+          echo "PASS: action completed successfully with valid markdown"

@@ -1,0 +1,75 @@
+name: tests
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+    paths:
+      - tests/**
+      - .github/workflows/tests.yml
+      - entrypoint.sh
+      - Dockerfile
+      - .dockerignore
+  push:
+    branches:
+      - main
+    paths:
+      - tests/**
+      - .github/workflows/tests.yml
+      - entrypoint.sh
+      - Dockerfile
+      - .dockerignore
+
+permissions: read-all
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+
+      - name: Test 1 - Check done in tests/test2 - tests/test2/normal.md
+        # Unpinned Actions Full Length Commit SHA
+        uses: ./
+        with:
+          debug: true
+          search_paths: tests/test2
+
+      - name: Test 2 - Check with "exclude", "search_paths" and "quiet" - tests/test2/normal.md
+        uses: ./
+        with:
+          exclude: |
+            CHANGELOG.md
+            test1/excluded_file.md
+            bad.md
+            tests/test3-multiple-files/
+          search_paths: tests/
+          quiet: true
+
+      - name: Test 3 - Check "all" files
+        continue-on-error: true
+        uses: ./
+        with:
+          debug: true
+          search_paths: tests
+
+      - name: Create config file for markdown-link-check in "Test 4"
+        run: |
+          cat > .mlc_config.json << EOF
+          {
+            "ignorePatterns": [
+              {
+                "pattern": "^https://non-existing-domain.com"
+              }
+            ]
+          }
+          EOF
+
+      - name: Test 4 - Check with "search_paths", "verbose" and ".mlc_config.json" - "https://non-existing-domain.com" is ignored
+        uses: ./
+        with:
+          search_paths: |
+            tests/test1
+            tests/test2
+          verbose: true

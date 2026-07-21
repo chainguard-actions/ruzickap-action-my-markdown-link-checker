@@ -1,4 +1,4 @@
-name: Test config file parameter
+name: Test config_file input - use custom markdown-link-check config
 on:
   workflow_dispatch:
 jobs:
@@ -6,14 +6,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - name: Run markdown link checker with config file
+
+      - name: Verify fixture files exist
+        run: |
+          ls -la "$GITHUB_WORKSPACE/tests/fixtures/config-file/"
+          cat "$GITHUB_WORKSPACE/tests/fixtures/config-file/mlc_config.json"
+          cat "$GITHUB_WORKSPACE/tests/fixtures/config-file/test.md"
+
+      - name: Run action with custom config file that ignores localhost links
         id: action
         uses: .
         with:
-          config_file: tests/fixtures/mlc_config.json
-          search_paths: |
-            tests/fixtures/excluded
-      - name: Assert action succeeded with config file
+          config_file: ${{ github.workspace }}/tests/fixtures/config-file/mlc_config.json
+          search_paths: ${{ github.workspace }}/tests/fixtures/config-file
+          verbose: "true"
+
+      - name: Assert action succeeded (localhost link was ignored by config)
         run: |
-          echo "Action completed with config file successfully"
-          echo "PASS"
+          echo "PASS: action completed successfully with custom config file"

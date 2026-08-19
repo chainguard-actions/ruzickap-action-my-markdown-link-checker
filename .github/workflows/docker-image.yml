@@ -1,0 +1,31 @@
+---
+name: docker-image
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [opened, synchronize]
+    paths:
+      - .dockerignore
+      - .github/workflows/docker-image.yml
+      - Dockerfile
+      - entrypoint.sh
+  push:
+    branches:
+      - main
+    paths:
+      - .dockerignore
+      - .github/workflows/docker-image.yml
+      - Dockerfile
+      - entrypoint.sh
+
+permissions: read-all
+
+jobs:
+  docker-image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Build test
+        run: docker build . --file Dockerfile

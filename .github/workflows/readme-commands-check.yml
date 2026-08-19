@@ -1,0 +1,27 @@
+---
+name: readme-commands-check
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [opened, synchronize]
+    paths:
+      - README.md
+      - .github/workflows/readme-commands-check.yml
+  push:
+    branches:
+      - main
+    paths:
+      - README.md
+      - .github/workflows/readme-commands-check.yml
+
+permissions: read-all
+
+jobs:
+  readme-commands-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Run commands in README.md file
+        run: sed -n "/^\`\`\`bash.*/,/^\`\`\`$/p" README.md | sed "/^\`\`\`*/d" | bash -euxo pipefail

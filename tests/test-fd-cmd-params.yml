@@ -1,4 +1,4 @@
-name: Test fd_cmd_params usage
+name: Test fd_cmd_params parameter
 on:
   workflow_dispatch:
 jobs:
@@ -6,12 +6,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - name: Run markdown link checker with custom fd params targeting only valid.md
+
+      - name: Set up git origin reachable inside Docker container
+        run: |
+          git config user.email "test@example.com"
+          git config user.name "Test User"
+          rm -rf "$GITHUB_WORKSPACE/.git-remote"
+          git init --bare "$GITHUB_WORKSPACE/.git-remote"
+          git push "$GITHUB_WORKSPACE/.git-remote" HEAD:refs/heads/act-harness
+          git remote set-url origin "$GITHUB_WORKSPACE/.git-remote" 2>/dev/null || \
+            git remote add origin "$GITHUB_WORKSPACE/.git-remote"
+
+      - name: Run markdown link checker with custom fd_cmd_params to target only local-only.md
         id: action
         uses: .
         with:
-          fd_cmd_params: tests/fixtures/valid.md -0 --extension md --type f
-      - name: Assert action succeeded with custom fd params
+          config_file: "${{ github.workspace }}/tests/fixtures/mlc-config.json"
+          fd_cmd_params: "${{ github.workspace }}/tests/fixtures/local-only.md -0 --extension md --type f --hidden --no-ignore"
+
+      - name: Assert action completed successfully with custom fd params
         run: |
-          echo "Action completed successfully with custom fd_cmd_params"
-          echo "PASS"
+          echo "PASS: action completed with custom fd_cmd_params without errors"

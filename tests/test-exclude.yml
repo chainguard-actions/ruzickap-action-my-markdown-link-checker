@@ -1,4 +1,4 @@
-name: Test exclude functionality
+name: Test exclude parameter
 on:
   workflow_dispatch:
 jobs:
@@ -6,13 +6,33 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - name: Run markdown link checker excluding broken-links file
+
+      - name: Set up git origin reachable inside Docker container
+        run: |
+          git config user.email "test@example.com"
+          git config user.name "Test User"
+          rm -rf "$GITHUB_WORKSPACE/.git-remote"
+          git init --bare "$GITHUB_WORKSPACE/.git-remote"
+          git push "$GITHUB_WORKSPACE/.git-remote" HEAD:refs/heads/act-harness
+          git remote set-url origin "$GITHUB_WORKSPACE/.git-remote" 2>/dev/null || \
+            git remote add origin "$GITHUB_WORKSPACE/.git-remote"
+
+      - name: Create a markdown file with a broken link that should be excluded
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/tests/fixtures/excluded"
+          cat > "$GITHUB_WORKSPACE/tests/fixtures/excluded/broken.md" << 'EOF'
+          # Broken Links File
+          [Broken Link](https://this-domain-does-not-exist-at-all-12345.invalid/page)
+          EOF
+
+      - name: Run markdown link checker excluding the broken file directory
         id: action
         uses: .
         with:
-          search_paths: tests/fixtures
-          exclude: tests/fixtures/broken-links.md
-      - name: Assert action succeeded with exclusion
+          config_file: "${{ github.workspace }}/tests/fixtures/mlc-config.json"
+          search_paths: "${{ github.workspace }}/tests/fixtures"
+          exclude: "${{ github.workspace }}/tests/fixtures/excluded"
+
+      - name: Assert action completed successfully with exclusion
         run: |
-          echo "Action completed successfully with exclusion"
-          echo "PASS"
+          echo "PASS: action completed with exclusion without errors"

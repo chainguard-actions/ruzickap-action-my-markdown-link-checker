@@ -6,11 +6,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - id: action
+
+      - name: Set up git origin reachable inside Docker container
+        run: |
+          git config user.email "test@example.com"
+          git config user.name "Test User"
+          rm -rf "$GITHUB_WORKSPACE/.git-remote"
+          git init --bare "$GITHUB_WORKSPACE/.git-remote"
+          git push "$GITHUB_WORKSPACE/.git-remote" HEAD:refs/heads/act-harness
+          git remote set-url origin "$GITHUB_WORKSPACE/.git-remote" 2>/dev/null || \
+            git remote add origin "$GITHUB_WORKSPACE/.git-remote"
+
+      - name: Run markdown link checker in debug mode
+        id: action
         uses: .
         with:
+          config_file: "${{ github.workspace }}/tests/fixtures/mlc-config.json"
+          search_paths: "${{ github.workspace }}/tests/fixtures"
           debug: "true"
-          search_paths: "."
-      - name: Assert action completed successfully
+
+      - name: Assert action completed successfully in debug mode
         run: |
-          echo "PASS: action completed with debug mode enabled"
+          echo "PASS: action completed in debug mode without errors"

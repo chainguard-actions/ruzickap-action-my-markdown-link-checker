@@ -1,4 +1,4 @@
-name: Test exclude files from markdown link checking
+name: Test exclude functionality
 on:
   workflow_dispatch:
 jobs:
@@ -7,31 +7,13 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - name: Create test markdown files
-        run: |
-          mkdir -p "$GITHUB_WORKSPACE/test-docs/included"
-          mkdir -p "$GITHUB_WORKSPACE/test-docs/excluded"
-
-          cat > "$GITHUB_WORKSPACE/test-docs/included/good.md" << 'EOF'
-          # Good Document
-
-          [GitHub](https://github.com)
-          EOF
-
-          # This file has a broken link but should be excluded
-          cat > "$GITHUB_WORKSPACE/test-docs/excluded/broken.md" << 'EOF'
-          # Broken Links Document
-
-          [Broken Link](https://this-domain-does-not-exist-at-all-xyz123.invalid)
-          EOF
-
-      - name: Run markdown link checker with exclusion
+      - name: Run action with broken file excluded
         id: action
         uses: .
         with:
-          search_paths: test-docs
-          exclude: test-docs/excluded
+          search_paths: ${{ github.workspace }}/tests/fixtures/exclude
+          exclude: broken.md
 
-      - name: Assert action completed successfully with exclusion
+      - name: Assert action completed successfully (broken file was excluded)
         run: |
-          echo "PASS: action completed with excluded directory without error"
+          echo "PASS: action completed successfully with broken file excluded"

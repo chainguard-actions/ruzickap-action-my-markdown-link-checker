@@ -1,0 +1,20 @@
+name: Test config_file - custom markdown-link-check configuration
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - id: action
+        uses: .
+        with:
+          config_file: ${{ github.workspace }}/tests/fixtures/config/mlc_config.json
+          search_paths: ${{ github.workspace }}/tests/fixtures/config
+          quiet: "true"
+
+      - name: Assert action succeeded with custom config
+        run: |
+          echo "Action completed successfully with custom config file"
+          echo "PASS"

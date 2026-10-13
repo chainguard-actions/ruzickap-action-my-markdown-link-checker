@@ -1,0 +1,11 @@
+{
+  "timeout": "5s",
+  "retryOn429": false,
+  "retryCount": 0,
+  "ignorePatterns": [
+    {
+      "pattern": "^https?://"
+    }
+  ],
+  "aliveStatusCodes": [200, 206]
+}

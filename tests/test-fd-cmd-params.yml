@@ -1,0 +1,24 @@
+name: Test fd_cmd_params - custom fd command parameters
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - id: action
+        uses: .
+        with:
+          # Use fd_cmd_params to only find check-me.md by glob, excluding skip-me.md which has broken links.
+          # The path is included in fd_cmd_params since search_paths is ignored when fd_cmd_params is set.
+          # fd syntax: fd [OPTIONS] [PATTERN] [PATH]
+          fd_cmd_params: >-
+            . ${{ github.workspace }}/tests/fixtures/fd-params -0 --extension md --type f --hidden --no-ignore
+            --glob check-me.md
+          quiet: "true"
+
+      - name: Assert action succeeded (only valid file was checked)
+        run: |
+          echo "Action completed successfully - only valid file was checked via fd_cmd_params"
+          echo "PASS"

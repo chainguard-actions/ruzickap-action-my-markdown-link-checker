@@ -12,6 +12,7 @@ Hardened by [Chainguard](https://www.chainguard.dev) from the upstream action at
 | v1.4.0 | [`v1.4.0`](https://github.com/chainguard-actions/ruzickap-action-my-markdown-link-checker/tree/v1.4.0) | [`51aa9a3`](https://github.com/ruzickap/action-my-markdown-link-checker/commit/51aa9a3a3c6781804a3660ff105f650ac44c56e4) | [`HARDENING.md`](https://github.com/chainguard-actions/ruzickap-action-my-markdown-link-checker/blob/v1.4.0/HARDENING.md) |
 | v1.5.1 | [`v1.5.1`](https://github.com/chainguard-actions/ruzickap-action-my-markdown-link-checker/tree/v1.5.1) | [`dfc79f0`](https://github.com/ruzickap/action-my-markdown-link-checker/commit/dfc79f055da63c13fc3b95ae67b46dce2b99a44b) | [`HARDENING.md`](https://github.com/chainguard-actions/ruzickap-action-my-markdown-link-checker/blob/v1.5.1/HARDENING.md) |
 | v1.5.2 | [`v1.5.2`](https://github.com/chainguard-actions/ruzickap-action-my-markdown-link-checker/tree/v1.5.2) | [`7f87ffd`](https://github.com/ruzickap/action-my-markdown-link-checker/commit/7f87ffdc44d4617230653cad128939893fadcebd) | [`HARDENING.md`](https://github.com/chainguard-actions/ruzickap-action-my-markdown-link-checker/blob/v1.5.2/HARDENING.md) |
+| v1.6.0 | [`v1.6.0`](https://github.com/chainguard-actions/ruzickap-action-my-markdown-link-checker/tree/v1.6.0) | [`582e779`](https://github.com/ruzickap/action-my-markdown-link-checker/commit/582e779740d5abd2c8c51a73fb1ccb92de975432) | [`HARDENING.md`](https://github.com/chainguard-actions/ruzickap-action-my-markdown-link-checker/blob/v1.6.0/HARDENING.md) |
 
 ## Privacy
 

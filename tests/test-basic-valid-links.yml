@@ -1,0 +1,30 @@
+name: Test basic valid links
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Create markdown files with valid local links
+        run: |
+          rm -rf md-test-good
+          mkdir -p md-test-good/sub
+          printf '# Good\n\nSee [other](./other.md) and [sub](./sub/page.md).\n' > md-test-good/README.md
+          printf '# Other\n\nBack to [readme](./README.md).\n' > md-test-good/other.md
+          printf '# Page\n\nUp to [readme](../README.md).\n' > md-test-good/sub/page.md
+          chmod -R a+rX md-test-good
+      - id: action
+        uses: .
+        with:
+          search_paths: md-test-good
+      - name: Assert action succeeded
+        env:
+          OUTCOME: ${{ steps.action.outcome }}
+        run: |
+          echo "outcome: $OUTCOME"
+          if [ "$OUTCOME" != "success" ]; then
+            echo "FAIL: expected success"
+            exit 1
+          fi
+          echo "PASS"

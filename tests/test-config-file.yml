@@ -1,0 +1,30 @@
+name: Test config file ignore pattern
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Create markdown with broken link and config ignoring it
+        run: |
+          rm -rf md-test-config
+          mkdir -p md-test-config
+          printf '# Config\n\nSee [missing](./ignored-missing-target.md).\n' > md-test-config/README.md
+          printf '{\n  "ignorePatterns": [ { "pattern": "ignored-missing-target" } ]\n}\n' > md-test-config/mlc_config.json
+          chmod -R a+rX md-test-config
+      - id: action
+        uses: .
+        with:
+          search_paths: md-test-config
+          config_file: md-test-config/mlc_config.json
+      - name: Assert action succeeded
+        env:
+          OUTCOME: ${{ steps.action.outcome }}
+        run: |
+          echo "outcome: $OUTCOME"
+          if [ "$OUTCOME" != "success" ]; then
+            echo "FAIL: expected success since broken link is ignored by config"
+            exit 1
+          fi
+          echo "PASS"
